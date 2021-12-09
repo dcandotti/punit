@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+define("PWD", getcwd());
+
+const AUTOLOADER_PATHNAME = PWD . "/vendor/autoload.php";
+if (!file_exists(AUTOLOADER_PATHNAME)) die(red("Error:") . " autoloader not found at " . AUTOLOADER_PATHNAME . PHP_EOL);
+require(AUTOLOADER_PATHNAME);
+
+const TESTING_PATH = PWD . "/test";
+if (!is_dir(TESTING_PATH)) die(red("Error:") . " tests not found at " . TESTING_PATH . PHP_EOL);
+
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(TESTING_PATH)) as $file)
+{
+	if ($file->getExtension() == "php") require_once($file->getPathname());
+}
+
+$output = new Punit\Output\ConsoleOutput();
+$functions = get_defined_functions();
+foreach ($functions["user"] as $function_name)
+{
+	Punit\PunyTestFactory::create(new Punit\Reflection\ReflectionFunction($function_name))->run($output);
+}
+
+$output->printSummary();
+
+function red (string $str)
+{
+	return "\e[0;31m{$str}\e[0m";
+}
+
+function green (string $str)
+{
+	return "\e[0;32m{$str}\e[0m";
+}

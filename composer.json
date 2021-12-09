@@ -1,0 +1,37 @@
+{
+	"name": "dcandotti/punit",
+	"description": "A puny PHP testing framework",
+	"type": "library",
+	"keywords": [
+		"punit",
+		"phpunit",
+		"xunit",
+		"test",
+		"testing",
+		"tdd"
+	],
+	"homepage": "https://github.com/dcandotti/punit",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Darío Candotti",
+			"email": "dario@candotti.dev",
+			"homepage": "https://dario.candotti.dev",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/dcandotti/punit/issues"
+	},
+	"require": {
+		"php": ">=7.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"punit\\": "src/"
+		}
+	},
+	"bin": [
+		"bin/punit"
+	]
+}
