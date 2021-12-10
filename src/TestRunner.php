@@ -27,6 +27,12 @@ class TestRunner
 		$this->printer->printFailed($test, $message);
 	}
 
+	public function testIncomplete (Test $test): void
+	{
+		$this->counter->testIncomplete();
+		$this->printer->printIncomplete($test);
+	}
+
 	public function run (): void
 	{
 		$this->runTests();

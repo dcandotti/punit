@@ -6,6 +6,7 @@ use punit\Text;
 use punit\text\DefaultText;
 use punit\text\Green;
 use punit\text\Red;
+use punit\text\Blue;
 use punit\text\Joined;
 use punit\text\EndOfLine;
 use punit\TestCounter;
@@ -32,18 +33,44 @@ class ConsolePrinter
 		if ($message) $this->println(new DefaultText($message));
 	}
 
+	public function printIncomplete (Test $test): void
+	{
+		$this->println(new Joined(
+			$test->getName(),
+			new DefaultText(": "),
+			new DefaultText("INCOMPLETE")
+		));
+	}
+
 	public function printSummary (TestCounter $counter): void
 	{
 		$this->print(new DefaultText(PHP_EOL));
-		$this->print(
-			new Joined(
-				new DefaultText("Total: {$counter->totalTests()}, "),
-				new Green(new DefaultText("Passed")),
-				new DefaultText(": {$counter->passedTests()}, "),
-				new Red(new DefaultText("Failed")),
-				new DefaultText(": {$counter->failedTests()}."),
-			)
+
+		$summary = new Joined(
+			new DefaultText("Total: {$counter->totalTests()}, "),
+			new Green(new DefaultText("Passed")),
+			new DefaultText(": {$counter->passedTests()}"),
 		);
+
+		if ($counter->passedTests() > 0) {
+			$summary = new Joined(
+				$summary,
+				new DefaultText(", "),
+				new Red(new DefaultText("Failed")),
+				new DefaultText(": {$counter->failedTests()}"),
+			);
+		}
+
+		if ($counter->incompleteTests() > 0) {
+			$summary = new Joined(
+				$summary,
+				new DefaultText(", "),
+				new Blue(new DefaultText("Incomplete")),
+				new DefaultText(": {$counter->incompleteTests()}"),
+			);
+		}
+
+		$this->print($summary);
 	}
 
 	private function println (Text $text): void

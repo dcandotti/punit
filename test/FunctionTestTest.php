@@ -1,7 +1,6 @@
 <?php
 use punit\FunctionTest;
 use ReflectionFunction;
-//use punit\Reporter;
 
 /**
  * @test
@@ -54,6 +53,11 @@ function whenInstantiatedWithAFunctionWithoutATestAnnotationShouldThrowException
 		return true;
 	}
 }
+
+/**
+ * @test
+ */
+function thisTestShouldBeMarkedAsIncomplete () {}
 
 /**
  * @test

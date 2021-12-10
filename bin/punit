@@ -21,6 +21,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(TESTING_PA
 	if ($file->getExtension() == "php") require_once($file->getPathname());
 }
 
+// @TODO: reordenar los tests de forma aleatoria (shuffle)
 (new punit\TestRunner(
 	new punit\collection\FunctionTestMap(
 		new punit\collection\FunctionTestFilter(

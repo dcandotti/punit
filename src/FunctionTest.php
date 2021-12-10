@@ -34,6 +34,8 @@ class FunctionTest
 			if ($result) $runner->testPassed($this);
 			else $runner->testFailed($this);
 		}
+		else if ($result === null)
+			$runner->testIncomplete($this);
 		else
 			$runner->testFailed($this, strval($result));
 	}
