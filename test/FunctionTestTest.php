@@ -3,6 +3,8 @@ use punit\Test;
 use punit\FunctionTest;
 use punit\TestRunner;
 use punit\Text;
+use punit\Assertion;
+use punit\assert\AssertSame;
 use ReflectionFunction;
 
 /**
@@ -81,8 +83,8 @@ function aFunctionTestWithAnEmptyBodyShouldBeMarkedAsIncomplete ()
 		public function run (): void {
 			throw new Exception();
 		}
-		public function assert (): bool {
-			return $this->expected === $this->actual;
+		public function assert (): Assertion {
+			return new AssertSame($this->expected, $this->actual);
 		}
 	}
 

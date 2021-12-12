@@ -39,6 +39,10 @@ class FunctionTest
 			if ($result) $runner->testPassed($this);
 			else $runner->testFailed($this);
 		}
+		else if (is_object($result) && $result instanceof Assertion)
+		{
+			$result->assert($runner, $this);
+		}
 		else $runner->testFailedWithMessage($this, new DefaultText(strval($result)));
 	}
 }
