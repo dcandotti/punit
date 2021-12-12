@@ -29,20 +29,31 @@ class FunctionTest
 
 	public function test (TestRunner $runner): void
 	{
-		$result = $this->reflectionFunction->invoke();
-		if ($result === null)
+		try
 		{
-			$runner->testIncomplete($this);
+			$result = $this->reflectionFunction->invoke();
+			if ($result === null)
+			{
+				$runner->testIncomplete($this);
+			}
+			else if (is_bool($result))
+			{
+				if ($result) $runner->testPassed($this);
+				else $runner->testFailed($this);
+			}
+			else if (is_object($result) && $result instanceof Assertion)
+			{
+				$result->assert($runner, $this);
+			}
+			else $runner->testFailedWithMessage($this, new DefaultText(strval($result)));
 		}
-		else if (is_bool($result))
+		catch (SkipTest $ex)
 		{
-			if ($result) $runner->testPassed($this);
-			else $runner->testFailed($this);
+			$runner->testSkipped($this);
 		}
-		else if (is_object($result) && $result instanceof Assertion)
+		catch (Exception $ex)
 		{
-			$result->assert($runner, $this);
+			$runner->testFailedWithMessage($this, new DefaultText($ex->getMessage()));
 		}
-		else $runner->testFailedWithMessage($this, new DefaultText(strval($result)));
 	}
 }

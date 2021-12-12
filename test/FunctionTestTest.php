@@ -5,6 +5,7 @@ use punit\TestRunner;
 use punit\Text;
 use punit\Assertion;
 use punit\assert\AssertSame;
+use punit\SkipTest;
 use ReflectionFunction;
 
 /**
@@ -55,14 +56,14 @@ function whenInstantiatedWithAFunctionWithoutATestAnnotationShouldThrowException
 /**
  * @test
  */
+function thisTestShouldBeMarkedAsIncomplete () {}
+
+/**
+ * @test
+ */
 function aFunctionTestWithAnEmptyBodyShouldBeMarkedAsIncomplete ()
 {
-	/**
-	 * @test
-	 */
-	function functionTestWithEmptyBody () {}
-
-	class MockRunner implements TestRunner {
+	class PassedTestMockRunner implements TestRunner {
 		private $expected;
 		private $actual;
 		public function __construct (Test $test) {
@@ -80,6 +81,9 @@ function aFunctionTestWithAnEmptyBodyShouldBeMarkedAsIncomplete ()
 		public function testIncomplete (Test $test): void {
 			$this->actual = $test;
 		}
+		public function testSkipped (Test $test): void {
+			throw new Exception();
+		}
 		public function run (): void {
 			throw new Exception();
 		}
@@ -88,8 +92,57 @@ function aFunctionTestWithAnEmptyBodyShouldBeMarkedAsIncomplete ()
 		}
 	}
 
-	$test = new FunctionTest(new ReflectionFunction("functionTestWithEmptyBody"));
-	$mockRunner = new MockRunner($test);
+	$test = new FunctionTest(new ReflectionFunction("thisTestShouldBeMarkedAsIncomplete"));
+	$mockRunner = new PassedTestMockRunner($test);
+
+	$test->test($mockRunner);
+
+	return $mockRunner->assert();
+}
+
+/**
+ * @test
+ */
+function thisTestShouldBeMarkedAsSkipped () {
+	throw new SkipTest();
+}
+
+/**
+ * @test
+ */
+function aFunctionTestThatThrowsAnSkipTestExceptionShouldBeMarkedAsSkipped ()
+{
+	class SkippedTestMockRunner implements TestRunner {
+		private $expected;
+		private $actual;
+		public function __construct (Test $test) {
+			$this->expected = $test;
+		}
+		public function testPassed (Test $test): void {
+			throw new Exception();
+		}
+		public function testFailed (Test $test): void {
+			throw new Exception();
+		}
+		public function testFailedWithMessage (Test $test, Text $message): void {
+			throw new Exception();
+		}
+		public function testIncomplete (Test $test): void {
+			throw new Exception();
+		}
+		public function testSkipped (Test $test): void {
+			$this->actual = $test;
+		}
+		public function run (): void {
+			throw new Exception();
+		}
+		public function assert (): Assertion {
+			return new AssertSame($this->expected, $this->actual);
+		}
+	}
+
+	$test = new FunctionTest(new ReflectionFunction("thisTestShouldBeMarkedAsSkipped"));
+	$mockRunner = new SkippedTestMockRunner($test);
 
 	$test->test($mockRunner);
 

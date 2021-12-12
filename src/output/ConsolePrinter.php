@@ -7,6 +7,7 @@ use punit\text\DefaultText;
 use punit\text\Green;
 use punit\text\Red;
 use punit\text\Yellow;
+use punit\text\Blue;
 use punit\text\Joined;
 use punit\text\EndOfLine;
 use punit\TestCounter;
@@ -47,6 +48,15 @@ class ConsolePrinter
 		));
 	}
 
+	public function printSkipped (Test $test): void
+	{
+		$this->println(new Joined(
+			$test->getName(),
+			new DefaultText(": "),
+			new Blue(new DefaultText("SKIPPED"))
+		));
+	}
+
 	public function printSummary (TestCounter $counter): void
 	{
 		$this->print(new DefaultText(PHP_EOL));
@@ -72,6 +82,15 @@ class ConsolePrinter
 				new DefaultText(", "),
 				new Yellow(new DefaultText("Incomplete")),
 				new DefaultText(": {$counter->incompleteTests()}"),
+			);
+		}
+
+		if ($counter->skippedTests() > 0) {
+			$summary = new Joined(
+				$summary,
+				new DefaultText(", "),
+				new Blue(new DefaultText("Skipped")),
+				new DefaultText(": {$counter->skippedTests()}"),
 			);
 		}
 

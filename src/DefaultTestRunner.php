@@ -40,6 +40,12 @@ class DefaultTestRunner
 		$this->printer->printIncomplete($test);
 	}
 
+	public function testSkipped (Test $test): void
+	{
+		$this->counter->testSkipped();
+		$this->printer->printSkipped($test);
+	}
+
 	public function run (): void
 	{
 		$this->runTests();

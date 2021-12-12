@@ -7,6 +7,7 @@ class TestCounter
 	private $passed;
 	private $failed;
 	private $incomplete;
+	private $skipped;
 
 	public function __construct ()
 	{
@@ -14,6 +15,7 @@ class TestCounter
 		$this->passed = 0;
 		$this->failed = 0;
 		$this->incomplete = 0;
+		$this->skipped = 0;
 	}
 
 	public function testPassed (): void
@@ -34,6 +36,12 @@ class TestCounter
 		$this->incomplete++;
 	}
 
+	public function testSkipped (): void
+	{
+		$this->total++;
+		$this->skipped++;
+	}
+
 	public function totalTests (): int
 	{
 		return $this->total;
@@ -52,5 +60,10 @@ class TestCounter
 	public function incompleteTests (): int
 	{
 		return $this->incomplete;
+	}
+
+	public function skippedTests (): int
+	{
+		return $this->skipped;
 	}
 }
