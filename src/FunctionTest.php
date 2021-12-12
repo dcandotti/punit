@@ -1,9 +1,9 @@
 <?php
 namespace punit;
 use ReflectionFunction;
+use punit\text\DefaultText;
 use punit\text\Capitalized;
 use punit\text\NormalCase;
-use punit\text\DefaultText;
 
 class FunctionTest
 	implements Test
@@ -12,6 +12,7 @@ class FunctionTest
 
 	public function __construct (ReflectionFunction $reflectionFunction)
 	{
+		
 		$this->reflectionFunction = $reflectionFunction;
 	}
 
@@ -29,14 +30,15 @@ class FunctionTest
 	public function test (TestRunner $runner): void
 	{
 		$result = $this->reflectionFunction->invoke();
-		if (is_bool($result))
+		if ($result === null)
+		{
+			$runner->testIncomplete($this);
+		}
+		else if (is_bool($result))
 		{
 			if ($result) $runner->testPassed($this);
 			else $runner->testFailed($this);
 		}
-		else if ($result === null)
-			$runner->testIncomplete($this);
-		else
-			$runner->testFailed($this, strval($result));
+		else $runner->testFailedWithMessage($this, new DefaultText(strval($result)));
 	}
 }

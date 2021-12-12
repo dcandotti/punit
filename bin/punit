@@ -22,7 +22,7 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(TESTING_PA
 }
 
 // @TODO: reordenar los tests de forma aleatoria (shuffle)
-(new punit\TestRunner(
+(new punit\DefaultTestRunner(
 	new punit\collection\FunctionTestMap(
 		new punit\collection\FunctionTestFilter(
 			new punit\collection\ReflectionFunctionMap(

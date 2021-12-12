@@ -6,7 +6,7 @@ use punit\Text;
 use punit\text\DefaultText;
 use punit\text\Green;
 use punit\text\Red;
-use punit\text\Blue;
+use punit\text\Yellow;
 use punit\text\Joined;
 use punit\text\EndOfLine;
 use punit\TestCounter;
@@ -23,14 +23,19 @@ class ConsolePrinter
 		));
 	}
 
-	public function printFailed (Test $test, string $message = null): void
+	public function printFailed (Test $test): void
 	{
 		$this->println(new Joined(
 			$test->getName(),
 			new DefaultText(": "),
 			new Red(new DefaultText("FAILED"))
 		));
-		if ($message) $this->println(new DefaultText($message));
+	}
+
+	public function printFailedWithMessage (Test $test, Text $message): void
+	{
+		$this->printFailed($test);
+		$this->println($message);
 	}
 
 	public function printIncomplete (Test $test): void
@@ -38,7 +43,7 @@ class ConsolePrinter
 		$this->println(new Joined(
 			$test->getName(),
 			new DefaultText(": "),
-			new DefaultText("INCOMPLETE")
+			new Yellow(new DefaultText("INCOMPLETE"))
 		));
 	}
 
@@ -65,7 +70,7 @@ class ConsolePrinter
 			$summary = new Joined(
 				$summary,
 				new DefaultText(", "),
-				new Blue(new DefaultText("Incomplete")),
+				new Yellow(new DefaultText("Incomplete")),
 				new DefaultText(": {$counter->incompleteTests()}"),
 			);
 		}

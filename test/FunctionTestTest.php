@@ -1,5 +1,8 @@
 <?php
+use punit\Test;
 use punit\FunctionTest;
+use punit\TestRunner;
+use punit\Text;
 use ReflectionFunction;
 
 /**
@@ -43,21 +46,53 @@ function whenInstantiatedWithAFunctionWithoutATestAnnotationShouldThrowException
 		return true;
 	}
 
-	try
-	{
-		new FunctionTest(new ReflectionFunction("helloTestWithoutAnnotation"));
-		return false;
-	}
-	catch (FunctionIsNotATest $e)
-	{
-		return true;
-	}
+	new FunctionTest(new ReflectionFunction("helloTestWithoutAnnotation"));
+	return false;
 }
 
 /**
  * @test
  */
-function thisTestShouldBeMarkedAsIncomplete () {}
+function aFunctionTestWithAnEmptyBodyShouldBeMarkedAsIncomplete ()
+{
+	/**
+	 * @test
+	 */
+	function functionTestWithEmptyBody () {}
+
+	class MockRunner implements TestRunner {
+		private $expected;
+		private $actual;
+		public function __construct (Test $test) {
+			$this->expected = $test;
+		}
+		public function testPassed (Test $test): void {
+			throw new Exception();
+		}
+		public function testFailed (Test $test): void {
+			throw new Exception();
+		}
+		public function testFailedWithMessage (Test $test, Text $message): void {
+			throw new Exception();
+		}
+		public function testIncomplete (Test $test): void {
+			$this->actual = $test;
+		}
+		public function run (): void {
+			throw new Exception();
+		}
+		public function assert (): bool {
+			return $this->expected === $this->actual;
+		}
+	}
+
+	$test = new FunctionTest(new ReflectionFunction("functionTestWithEmptyBody"));
+	$mockRunner = new MockRunner($test);
+
+	$test->test($mockRunner);
+
+	return $mockRunner->assert();
+}
 
 /**
  * @test

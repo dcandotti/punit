@@ -1,54 +1,11 @@
 <?php
 namespace punit;
-use Iterator;
 
-class TestRunner
+interface TestRunner
 {
-	private $tests;
-	private $printer;
-	private $counter;
-
-	public function __construct (Iterator $tests, Printer $printer)
-	{
-		$this->tests = $tests;
-		$this->printer = $printer;
-		$this->counter = new TestCounter();
-	}
-
-	public function testPassed (Test $test): void
-	{
-		$this->counter->testPassed();
-		$this->printer->printPassed($test);
-	}
-
-	public function testFailed (Test $test, string $message = null): void
-	{
-		$this->counter->testFailed();
-		$this->printer->printFailed($test, $message);
-	}
-
-	public function testIncomplete (Test $test): void
-	{
-		$this->counter->testIncomplete();
-		$this->printer->printIncomplete($test);
-	}
-
-	public function run (): void
-	{
-		$this->runTests();
-		$this->printSummary();
-	}
-
-	private function runTests (): void
-	{
-		foreach ($this->tests as $test)
-		{
-			$test->test($this);
-		}
-	}
-
-	private function printSummary (): void
-	{
-		$this->printer->printSummary($this->counter);
-	}
+	public function testPassed (Test $test): void;
+	public function testFailed (Test $test): void;
+	public function testFailedWithMessage (Test $test, Text $message): void;
+	public function testIncomplete (Test $test): void;
+	public function run (): void;
 }

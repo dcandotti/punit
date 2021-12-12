@@ -1,6 +1,14 @@
 <?php
 namespace punit\collection;
 
+/**
+ * @SEE: Alternative names:
+ * 	TestAnnotationFilter,
+ * 	AnnotationTestFilter,
+ * 	IncludesTestAnnotation,
+ * 	HasTestAnnotation,
+ * 	TestAnnotated
+ */
 class FunctionTestFilter
 	extends FilterIterator
 {
